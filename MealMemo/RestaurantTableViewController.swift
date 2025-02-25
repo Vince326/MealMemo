@@ -63,6 +63,7 @@ class RestaurantTableViewController: UITableViewController {
             cell.locationLabel.text = self.restaurantLocations[indexPath.row]
             cell.typeLabel.text = self.restaurantTypes[indexPath.row]
             
+            //Adds a checkmark if the restaurant is favorited
             cell.accessoryType = self.restaurantIsFavorites[indexPath.row] ? .checkmark : .none
 
             return cell
@@ -92,15 +93,30 @@ class RestaurantTableViewController: UITableViewController {
         let reserveAction = UIAlertAction(title: "Reserve Table", style: .default, handler: reserveActionHandler)
         optionMenu.addAction(reserveAction)
         
+        if let popoverController = optionMenu.popoverPresentationController {
+            if let cell = tableView.cellForRow(at: indexPath) {
+                popoverController.sourceView = cell
+                popoverController.sourceRect = cell.bounds
+            }
+        }
+        
         
         //Mark as favorite action
-        let favoriteAction = UIAlertAction(title: "Mark as Favorite", style: .default, handler: {
+        
+        //Title that switches whether or not the restaurant is favorited. 
+        let favoriteActionTitle = self.restaurantIsFavorites[indexPath.row] ? "Unmark as Favorite" : "Mark as Favorite"
+        
+        let favoriteAction = UIAlertAction(title: favoriteActionTitle, style: .default, handler: {
             (action:UIAlertAction!) -> Void in
             
-            let cell = tableView.cellForRow(at: indexPath)
-            cell?.accessoryType = .checkmark
+            let cell = tableView.cellForRow(at: indexPath) as! RestaurantTableViewCell
             
-            self.restaurantIsFavorites[indexPath.row] = true
+            
+            //Hides the Image if the restaurant is not favorited
+            cell.favoriteImageView.isHidden = self.restaurantIsFavorites[indexPath.row]
+            
+            //Toggles Restaurant as favorite, which shows the image
+            self.restaurantIsFavorites[indexPath.row] = self.restaurantIsFavorites[indexPath.row] ? false : true
         })
         optionMenu.addAction(favoriteAction)
         
