@@ -124,15 +124,26 @@
                                                 </stackView>
                                             </subviews>
                                         </stackView>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heart.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="jKn-In-tdW" userLabel="Favorite Image View">
+                                            <rect key="frame" x="344" y="220" width="25" height="22"/>
+                                            <color key="tintColor" systemColor="systemYellowColor"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="25" id="g5m-SC-w8N"/>
+                                                <constraint firstAttribute="width" constant="25" id="xJu-ri-g4x"/>
+                                            </constraints>
+                                        </imageView>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="ZAs-KY-pO9" firstAttribute="top" secondItem="ysm-R6-zkD" secondAttribute="topMargin" id="12A-0W-p9m"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="jKn-In-tdW" secondAttribute="trailing" constant="4" id="7LY-VS-V0l"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="ZAs-KY-pO9" secondAttribute="bottom" id="SCF-4S-a2X"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="ZAs-KY-pO9" secondAttribute="trailing" id="cFc-Cl-1aH"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="jKn-In-tdW" secondAttribute="bottom" constant="62" id="v6E-ej-fip"/>
                                         <constraint firstItem="ZAs-KY-pO9" firstAttribute="leading" secondItem="ysm-R6-zkD" secondAttribute="leadingMargin" id="zA2-NH-i6l"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="favoriteImageView" destination="jKn-In-tdW" id="iZH-9Y-gBe"/>
                                     <outlet property="locationLabel" destination="T4z-Ss-yo0" id="a4U-RS-J6U"/>
                                     <outlet property="nameLabel" destination="KG8-Bv-PBZ" id="U5S-A5-T2J"/>
                                     <outlet property="thumbnailImageView" destination="JBJ-x2-jCE" id="iUK-Rk-cMi"/>

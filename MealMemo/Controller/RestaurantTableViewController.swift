@@ -36,11 +36,9 @@ class RestaurantTableViewController: UITableViewController {
     var restaurantIsFavorites = Array(repeating: false, count: 21)
     
     
-    enum Section {
-        case all
-    }
-    
     lazy var dataSource = configureDataSource()
+    
+    //MARK: - View Controller LifeCycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,15 +54,14 @@ class RestaurantTableViewController: UITableViewController {
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 
-    // MARK: - Table view data source
     
+    // MARK: - UITableView Diffable Data Source
     
-
-    func configureDataSource() -> UITableViewDiffableDataSource<Section, String> {
+    func configureDataSource() -> RestaurantDiffableDataSource {
         
-        let cellIdentifier = "datacell"
+        let cellIdentifier = "favoriteCell"
         
-        let dataSource = UITableViewDiffableDataSource<Section, String>(tableView: tableView, cellProvider: {
+        let dataSource = RestaurantDiffableDataSource(tableView: tableView, cellProvider: {
             tableView, indexPath, restaurant in
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! RestaurantTableViewCell
             
@@ -74,14 +71,18 @@ class RestaurantTableViewController: UITableViewController {
             cell.locationLabel.text = restaurant.location
             cell.typeLabel.text = restaurant.type
             
+            cell.favoriteImageView.isHidden = restaurant.isFavorite ? false : true
+            
             //Adds a checkmark if the restaurant is favorited
-            cell.accessoryType = self.restaurantIsFavorites[indexPath.row] ? .checkmark : .none
+            //cell.accessoryType = self.restaurantIsFavorites[indexPath.row] ? .checkmark : .none
 
             return cell
         }
     )
        return dataSource
         }
+    
+    // MARK: - UITableViewDelegate Protocol
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -115,7 +116,7 @@ class RestaurantTableViewController: UITableViewController {
         //Mark as favorite action
         
         //Title that switches whether or not the restaurant is favorited. 
-        let favoriteActionTitle = self.restaurantIsFavorites[indexPath.row] ? "Unmark as Favorite" : "Mark as Favorite"
+        let favoriteActionTitle = self.restaurants[indexPath.row].isFavorite ? "Remove from favorites" : "Mark as favorite"
         
         let favoriteAction = UIAlertAction(title: favoriteActionTitle, style: .default, handler: {
             (action:UIAlertAction!) -> Void in
@@ -127,7 +128,8 @@ class RestaurantTableViewController: UITableViewController {
             cell.favoriteImageView.isHidden = self.restaurants[indexPath.row].isFavorite
             
             //Toggles Restaurant as favorite, which shows the image
-            self.restaurantIsFavorites[indexPath.row].isFavorite = self.restaurantIsFavorites[indexPath.row].isFavorite ? false : true
+            self.restaurants[indexPath.row].isFavorite = self.restaurants[indexPath.row].isFavorite ? false: true
+            //self.restaurants[indexPath.row].isFavorite.toggle()
         })
         optionMenu.addAction(favoriteAction)
         
