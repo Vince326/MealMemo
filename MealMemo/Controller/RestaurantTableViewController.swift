@@ -59,7 +59,7 @@ class RestaurantTableViewController: UITableViewController {
     
     func configureDataSource() -> RestaurantDiffableDataSource {
         
-        let cellIdentifier = "favoriteCell"
+        let cellIdentifier = "datacell"
         
         let dataSource = RestaurantDiffableDataSource(tableView: tableView, cellProvider: {
             tableView, indexPath, restaurant in
@@ -139,6 +139,87 @@ class RestaurantTableViewController: UITableViewController {
         //Deselect the row
         tableView.deselectRow(at: indexPath, animated: true)
         
+    }
+    
+    //Implement Delete Swipe Function on the TableView
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        //Get the Selected Restaurant
+        guard let restaurant = self.dataSource.itemIdentifier(for: indexPath) else {
+            return UISwipeActionsConfiguration()
+        }
+        
+        //Delete Action
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {
+            (action, sourceView, completionHandler) in
+            
+            var snapshot = self.dataSource.snapshot()
+            snapshot.deleteItems([restaurant])
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+            
+            //Calls Completion Handler to Dismiss the action button
+            completionHandler(true)
+        }
+        
+        //Share Action
+        let shareAction = UIContextualAction(style: .normal, title: "Share") {
+            (action, sourceView, completionHandler) in
+            let defaultText = "Just checking in at " + restaurant.name
+            let activityController: UIActivityViewController
+            
+            if let imageToShare = UIImage(named: restaurant.image) {
+                activityController = UIActivityViewController(activityItems: [defaultText, imageToShare], applicationActivities: nil)
+            } else {
+                activityController = UIActivityViewController(activityItems: [defaultText], applicationActivities: nil)
+            }
+            
+            if let popoverController = activityController.popoverPresentationController {
+                if let cell = tableView.cellForRow(at: indexPath) {
+                    popoverController.sourceView = cell
+                    popoverController.sourceRect = cell.bounds
+                }
+            }
+            
+            self.present(activityController, animated: true, completion: nil)
+            completionHandler(true)
+            
+        }
+        
+        deleteAction.backgroundColor = .red
+        deleteAction.image = UIImage(systemName: "trash")
+        
+        shareAction.backgroundColor = .systemOrange
+        shareAction.image = UIImage(systemName: "square.and.arrow.up")
+        
+        
+        //Configure Both Actions as a swipe action
+        let swipeConfiguration = UISwipeActionsConfiguration(actions: [deleteAction, shareAction])
+        
+        return swipeConfiguration
+    }
+    
+    //Implement Check-In Swipe Function on TableView
+    
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        guard let restaurant = self.dataSource.itemIdentifier(for: indexPath) else {
+            return UISwipeActionsConfiguration()
+        }
+        
+        
+        let checkInAction = UIContextualAction(style: .normal, title: "Check-In") { (action, view, completionHandler) in
+            
+            
+            
+            completionHandler(true)
+        }
+        checkInAction.backgroundColor = .blue
+        checkInAction.image = UIImage(systemName: "heart.fill")
+        
+        
+        
+        return UISwipeActionsConfiguration(actions: [checkInAction])
     }
     
     

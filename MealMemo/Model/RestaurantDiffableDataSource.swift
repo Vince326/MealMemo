@@ -17,7 +17,5 @@ class RestaurantDiffableDataSource: UITableViewDiffableDataSource<Section, Resta
         return true
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        <#code#>
-    }
+    
 }
