@@ -18,7 +18,7 @@ class RestaurantDetailTwoColumnCell: UITableViewCell {
     
     @IBOutlet var column1TextLabel: UILabel! {
         didSet {
-            column2TextLabel.numberOfLines = 0
+            column1TextLabel.numberOfLines = 0
         }
     }
     

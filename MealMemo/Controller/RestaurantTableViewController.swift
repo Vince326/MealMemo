@@ -55,6 +55,42 @@ class RestaurantTableViewController: UITableViewController {
         snapshot.appendItems(restaurants, toSection: .all)
         
         dataSource.apply(snapshot, animatingDifferences: false)
+        
+        let color = UIColor(named: "NavigationBarTitle")!
+        
+        //Customize Navigation Bar
+        if let appearance = navigationController?.navigationBar.standardAppearance {
+            
+            //Configures the nav bar's background to be transparaent
+            appearance.configureWithOpaqueBackground()
+            
+            if let customFont = UIFont(name: "Nunito-Bold", size: 45.0)
+                {
+                appearance.titleTextAttributes = [.foregroundColor: UIColor(named: "NavigationBarTitle")!]
+                appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(named: "NavigationBarTitle")!, .font: customFont]
+            }
+            
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+            navigationController?.navigationBar.compactAppearance = appearance
+        }
+        
+        
+        //Removes back button title
+        navigationItem.backButtonTitle = ""
+        
+        //Always displays large title
+        navigationItem.largeTitleDisplayMode = .always
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.hidesBarsOnSwipe = true
+        
+       
     }
     
     

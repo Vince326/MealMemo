@@ -21,6 +21,9 @@ class RestaurantDetailViewController: UIViewController {
         //disables large titles in DetailVC
         navigationItem.largeTitleDisplayMode = .never
         
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         //Configure HeaderView
         headerView.nameLabel.text = restaurant.name
         headerView.typeLabel.text = restaurant.type
@@ -29,6 +32,21 @@ class RestaurantDetailViewController: UIViewController {
         let heartImage = restaurant.isFavorite ? "heart.fill" : "heart"
         headerView.heartButton.tintColor = restaurant.isFavorite ? .systemYellow: .white
         headerView.heartButton.setImage(UIImage(systemName: heartImage), for: .normal)
+        
+        //Remove tableView Seperator
+        tableView.separatorStyle = .none
+        
+        //Shifts tableView towards top of the screen
+        tableView.contentInsetAdjustmentBehavior = .never
+        
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.hidesBarsOnSwipe = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
 
