@@ -43,8 +43,6 @@ class RestaurantTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Enables Large Title in the Navigation Bar
-        navigationController?.navigationBar.prefersLargeTitles = true
         
         tableView.dataSource = dataSource
         tableView.separatorStyle = .none
@@ -56,13 +54,20 @@ class RestaurantTableViewController: UITableViewController {
         
         dataSource.apply(snapshot, animatingDifferences: false)
         
-        let color = UIColor(named: "NavigationBarTitle")!
+        //Enables Large Title in the Navigation Bar
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        //Makes the back bar on Navigation Item empty
+        navigationItem.backButtonTitle = ""
+        
+        
+        //let color = UIColor(named: "NavigationBarTitle")!
         
         //Customize Navigation Bar
         if let appearance = navigationController?.navigationBar.standardAppearance {
             
             //Configures the nav bar's background to be transparaent
-            appearance.configureWithOpaqueBackground()
+            appearance.configureWithTransparentBackground()
             
             if let customFont = UIFont(name: "Nunito-Bold", size: 45.0)
                 {
@@ -74,14 +79,8 @@ class RestaurantTableViewController: UITableViewController {
             navigationController?.navigationBar.scrollEdgeAppearance = appearance
             navigationController?.navigationBar.compactAppearance = appearance
         }
-        
-        
-        //Removes back button title
-        navigationItem.backButtonTitle = ""
-        
-        //Always displays large title
-        navigationItem.largeTitleDisplayMode = .always
-        
+        // Hides the bars of the navigation Controller when swiping
+        navigationController?.hidesBarsOnSwipe = true
         
     }
     
@@ -89,6 +88,7 @@ class RestaurantTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         
         navigationController?.hidesBarsOnSwipe = true
+        navigationController?.navigationBar.prefersLargeTitles = true
         
        
     }
