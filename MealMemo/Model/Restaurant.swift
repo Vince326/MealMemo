@@ -8,13 +8,33 @@
 import Foundation
 
 struct Restaurant: Hashable {
-    var name: String
-    var type: String
-    var location: String
-    var phone: String
-    var description: String
-    var image: String
-    var isFavorite: Bool
+    enum Rating:String {
+       case awesome
+        case good
+        case okay
+        case bad
+        case terrible
+        
+        var image: String {
+            switch self {
+                case .awesome: return "love"
+                case .good: return "cool"
+                case .okay: return "happy"
+                case . bad: return "sad"
+                case .terrible: return "angry"
+            
+            
+            }
+        }
+    }
+    var name = ""
+    var type = ""
+    var location = ""
+    var phone = ""
+    var description = ""
+    var image = ""
+    var isFavorite = false
+    var rating: Rating?
     
     init(name: String, type: String, location: String, phone: String, description: String, image: String, isFavorite: Bool) {
         self.name = name

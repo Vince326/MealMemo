@@ -10,6 +10,7 @@ import UIKit
 class RestaurantDetailHeaderView: UIView {
 
     @IBOutlet var headerImageView: UIImageView!
+    @IBOutlet var ratingImageView: UIImageView!
     
     //Change the font type for the Name Label
     @IBOutlet var nameLabel: UILabel! {
