@@ -39,6 +39,7 @@ import SwiftData
     var location: String = ""
     var phone: String = ""
     var summary: String = ""
+    //Converts original image property to imageData property. Instructs SwiftData to store the property in a different file from the database file
     @Attribute(.externalStorage) var imageData = Data()
     
     @Transient var image: UIImage {

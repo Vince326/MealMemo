@@ -6,8 +6,14 @@
 //
 
 import UIKit
+import SwiftData
 
 class NewRestaurantController: UITableViewController{
+    
+    var container : ModelContainer?
+    var restaurant: Restaurant?
+    
+    var dataStore: RestaurantDataStore?
     
     @IBOutlet var nameTextField: RoundedTextField! {
         didSet {
@@ -98,6 +104,9 @@ class NewRestaurantController: UITableViewController{
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
+        //Instantiates Container and restaurant variables
+        container = try? ModelContainer(for: Restaurant.self)
+        restaurant = Restaurant()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -173,7 +182,36 @@ class NewRestaurantController: UITableViewController{
         print("Phone: \(phoneTextField.text ?? "")")
         print("Description: \(descriptionTextView.text ?? "")")
         
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true) {
+            // Instructs the app to initiate retrieval of restaurant records once again
+            self.dataStore?.fetchRestaurantData()
+        }
+        
+        // Code saves the restaurant if there's details in the fields below
+        if let restaurant = restaurant {
+            restaurant.name = nameTextField.text ?? ""
+            restaurant.type = typeTextField.text ?? ""
+            restaurant.location = addressTextField.text ?? ""
+            restaurant.phone = phoneTextField.text ?? ""
+            restaurant.summary = descriptionTextView.text ?? ""
+            restaurant.isFavorite = false
+            
+            if let image = photoImageView.image {
+                restaurant.image = image
+            }
+            
+            container?.mainContext.insert(restaurant)
+            
+            do {
+                try container?.mainContext.save()
+            } catch {
+                print(error)
+            }
+            
+            print("Saving data to database...")
+    }
+    
+           
     }
 
 }
