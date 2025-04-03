@@ -8,11 +8,24 @@
 import UIKit
 import SwiftData
 
+protocol RestaurantDataStore {
+    func fetchRestaurantData()
+    func updateSnapshot(animatingChange: Bool)
+}
+
 class RestaurantTableViewController: UITableViewController, RestaurantDataStore {
     
-    protocol RestaurantDataStore {
-        func fetchRestaurantData()
-    }
+    
+   
+    var restaurants:[Restaurant] = []
+    var container : ModelContainer?
+    
+    var searchController: UISearchController!
+   
+    
+    
+    lazy var dataSource = configureDataSource()
+    
     
     @IBOutlet var emptyRestaurantView: UIView!
     
@@ -21,13 +34,6 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         dismiss(animated: true, completion: nil)
     }
     
-    
-    var restaurants:[Restaurant] = []
-    var container : ModelContainer?
-   
-    
-    
-    lazy var dataSource = configureDataSource()
     
     //MARK: - View Controller LifeCycle
     
@@ -76,7 +82,21 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         //Creates the container
         container = try? ModelContainer(for: Restaurant.self)
         
-        fetchRestaurantDatata()
+        fetchRestaurantData()
+        
+        
+        searchController = UISearchController(searchResultsController: nil)
+        //Puts search bar in search controller
+        tableView.tableHeaderView = searchController.searchBar
+        
+        //Search Results
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        
+        //Customizing Search Bar
+        searchController.searchBar.placeholder = "Search for a restaurant"
+        searchController.searchBar.tintColor = UIColor(named: "NavigationBarTitle")
+        searchController.searchBar.backgroundImage = UIImage()
         
         
     }
@@ -119,12 +139,13 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     
     
 
-    
-    
-    
     //MARK: - Implement Delete / Share Swipe Function on the TableView
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        if  searchController.isActive {
+            return UISwipeActionsConfiguration()
+        }
         
         //Get the Selected Restaurant
         guard let restaurant = self.dataSource.itemIdentifier(for: indexPath) else {
@@ -214,6 +235,28 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         return swipeConfiguration
     }
     
+    
+    //MARK: - Swift Data
+    
+    //Instructs SwiftData to retrieve all restaurant records from database
+    func fetchRestaurantData() {
+        print("Fetching Restaurant Data...")
+        fetchRestaurantData(searchText: "")
+    }
+    
+    func updateSnapshot(animatingChange: Bool = false) {
+        //Create a snapshot and populate the data
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Restaurant>()
+        snapshot.appendSections([.all])
+        snapshot.appendItems(restaurants, toSection: .all)
+        
+        dataSource.apply(snapshot, animatingDifferences: animatingChange)
+        
+        tableView.backgroundView?.isHidden = restaurants.count == 0 ? false : true
+    }
+    
+    
+    
     // MARK: - Navigation to RestaurantDetailVC
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showRestaurantDetail" {
@@ -231,24 +274,50 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         }
     }
     
-    //Instructs SwiftData to retrieve all restaurant records from database
-    func fetchRestaurantDatata() {
-        let descriptor = FetchDescriptor<Restaurant>()
+    
+    //MARK: - Bring Up Walkthrough Controller
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if UserDefaults.standard.bool(forKey: "hasSeenWalkthrough") {
+            return
+        }
+        
+        let storyBoard = UIStoryboard(name: "Onboarding", bundle: nil)
+        if let walkthroughVC = storyBoard.instantiateInitialViewController() as? WalkthroughViewController {
+            present(walkthroughVC, animated: true, completion: nil)
+        }
+    }
+    
+    //MARK: - Search Restaurant Functionality using Predicate for name and location
+    func fetchRestaurantData(searchText: String) {
+        let descriptor: FetchDescriptor<Restaurant>
+        
+        if searchText.isEmpty {
+            descriptor = FetchDescriptor<Restaurant>()
+        } else {
+            let predicate = #Predicate <Restaurant> { $0.name.localizedStandardContains(searchText) || $0.location.localizedStandardContains(searchText) }
+            descriptor = FetchDescriptor<Restaurant>(predicate: predicate)
+        }
+        
         restaurants = (try? container?.mainContext.fetch(descriptor)) ?? []
+        
         updateSnapshot()
     }
     
-    func updateSnapshot(animatingChange: Bool = false) {
-        //Create a snapshot and populate the data
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Restaurant>()
-        snapshot.appendSections([.all])
-        snapshot.appendItems(restaurants, toSection: .all)
-        
-        dataSource.apply(snapshot, animatingDifferences: animatingChange)
-        
-        tableView.backgroundView?.isHidden = restaurants.count == 0 ? false : true
-    }
+    
     
    
+}
+
+//MARK: - Searching the Results using SearchBar
+extension RestaurantTableViewController : UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        
+        guard let searchText = searchController.searchBar.text else {
+            return
+        }
+        
+        fetchRestaurantData(searchText: searchText)
+    }
 }
     

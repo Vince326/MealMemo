@@ -11,6 +11,10 @@ class RestaurantDetailViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var headerView: RestaurantDetailHeaderView!
+    @IBOutlet var favoriteBarButton: UIBarButtonItem!
+    
+    var restaurant: Restaurant = Restaurant()
+    var dataStore: RestaurantDataStore?
     
     
     @IBAction func close(segue: UIStoryboardSegue) {
@@ -43,7 +47,7 @@ class RestaurantDetailViewController: UIViewController {
         })
     }
     
-    var restaurant: Restaurant = Restaurant()
+    
     
 
     override func viewDidLoad() {
@@ -60,10 +64,6 @@ class RestaurantDetailViewController: UIViewController {
         headerView.nameLabel.text = restaurant.name
         headerView.typeLabel.text = restaurant.type
         headerView.headerImageView.image = restaurant.image
-        
-        let heartImage = restaurant.isFavorite ? "heart.fill" : "heart"
-        headerView.heartButton.tintColor = restaurant.isFavorite ? .systemYellow: .white
-        headerView.heartButton.setImage(UIImage(systemName: heartImage), for: .normal)
         
         //Remove tableView Seperator
         tableView.separatorStyle = .none
@@ -101,8 +101,6 @@ class RestaurantDetailViewController: UIViewController {
         
     }
     
-
-
 }
 
 extension RestaurantDetailViewController: UITableViewDataSource, UITableViewDelegate {
@@ -147,6 +145,21 @@ extension RestaurantDetailViewController: UITableViewDataSource, UITableViewDele
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    //MARK: - Favorite Action
+    @IBAction func saveFavorite() {
+        restaurant.isFavorite.toggle()
+        
+        configureFavoriteIcon()
+        dataStore?.updateSnapshot(animatingChange: false)
+    }
+    
+    func configureFavoriteIcon() {
+        let heartImage = restaurant.isFavorite ? "heart.fill" : "heart"
+        let heartConfiguration = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+        favoriteBarButton.image = UIImage(systemName: heartImage, withConfiguration: heartConfiguration)
+        favoriteBarButton.tintColor = restaurant.isFavorite ? .systemYellow : .white
     }
     
 }

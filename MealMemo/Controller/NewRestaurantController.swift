@@ -62,9 +62,6 @@ class NewRestaurantController: UITableViewController{
     }
     
     
-    
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -173,7 +170,6 @@ class NewRestaurantController: UITableViewController{
             
             return
         }
-        
         
         // Prints the details of restaurant when save button clicked
         print("Name: \(nameTextField.text ?? "")")
