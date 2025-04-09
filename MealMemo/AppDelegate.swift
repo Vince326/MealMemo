@@ -28,6 +28,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         
         return true
+        
+        
+        // Customize TabBarController Appearance
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithTransparentBackground()
+        
+        UITabBar.appearance().tintColor = UIColor(named: "NavigationBarTitle")
+        UITabBar.appearance().standardAppearance = tabBarAppearance
     }
 
     // MARK: UISceneSession Lifecycle
