@@ -9,7 +9,7 @@ import UIKit
 
 class AboutTableViewController: UITableViewController {
     
-    enum Sections {
+    enum Section {
         case feedback
         case followus
     }
@@ -19,6 +19,7 @@ class AboutTableViewController: UITableViewController {
         var link: String
         var image: String
     }
+    
     
     var sectionContent = [ [LinkItem(text: "Rate us on App Store", link: "https://www.apple.com/ios/app-store/", image: "store"),  LinkItem(text: "Tell us your feedback", link: "https://appcoda.com/contact", image: "chat")
                            ], [LinkItem(text: "Twitter", link: "https://twitter.com/appcodamobile", image: "twitter"),
@@ -32,9 +33,29 @@ class AboutTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        //Use large title in navigtionBar
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        //Customize navigationBar Appearance
+        if let appearance = navigationController?.navigationBar.standardAppearance {
+            appearance.configureWithTransparentBackground()
+            
+            if let customFont = UIFont(name: "Nunito-Bold", size: 45.0) {
+                appearance.titleTextAttributes = [.foregroundColor: UIColor(named: "NavigationBarTitle")!]
+                appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(named: "NavigationBarTitle")!, .font: customFont]
+            }
+            
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+            navigationController?.navigationBar.compactAppearance = appearance
+        }
+        
+        //Loads the table data
         tableView.dataSource = dataSource
         updateSnapshot()
+        
+        
     }
 
     // MARK: - Table view data source
@@ -66,13 +87,20 @@ class AboutTableViewController: UITableViewController {
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        //Get the selected item
+        guard let linkItem = self.dataSource.itemIdentifier(for: indexPath) else { return }
+        
+        if let url = URL(string: linkItem.link) {
+            UIApplication.shared.open(url)
+        }
+        
+        performSegue(withIdentifier: "ShowWebView", sender: self)
+        
+        tableView.deselectRow(at: indexPath, animated: false)
+        
     }
-    */
 
     /*
     // Override to support editing the table view.
@@ -101,14 +129,24 @@ class AboutTableViewController: UITableViewController {
     }
     */
 
-    /*
+   
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showWebView" {
+            // Get the new view controller using segue.destination.
+            if let destinationController = segue.destination as? WebViewController,
+               
+                // Pass the selected object to the new view controller.
+                let indexPath = tableView.indexPathForSelectedRow,
+                let linkItem = self.dataSource.itemIdentifier(for: indexPath) {
+                        destinationController.targetURL = linkItem.link
+                    }
+        }
+       
+       
     }
-    */
+   
 
 }
