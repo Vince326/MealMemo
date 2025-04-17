@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 class AboutTableViewController: UITableViewController {
     
@@ -86,21 +87,35 @@ class AboutTableViewController: UITableViewController {
         
         dataSource.apply(snapshot, animatingDifferences: false)
     }
-
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        //Get the selected item
+    
+    //Loads web contant for with SFSafariViewController
+    func openWithSafariViewController(indexPath: IndexPath) {
         guard let linkItem = self.dataSource.itemIdentifier(for: indexPath) else { return }
         
         if let url = URL(string: linkItem.link) {
-            UIApplication.shared.open(url)
+            let safariViewController = SFSafariViewController(url: url)
+            present(safariViewController, animated: true, completion: nil)
         }
+    }
+    
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        performSegue(withIdentifier: "ShowWebView", sender: self)
+        //Get Selected Section and proceed 
+        switch indexPath.section {
+        case 0:
+            performSegue(withIdentifier: "ShowWebView", sender: self)
+        case 1:
+            openWithSafariViewController(indexPath: indexPath)
+        default:
+            break
+        }
         
         tableView.deselectRow(at: indexPath, animated: false)
         
     }
+    
+    
 
     /*
     // Override to support editing the table view.

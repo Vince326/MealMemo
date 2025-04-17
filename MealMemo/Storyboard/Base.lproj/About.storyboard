@@ -57,17 +57,17 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="About" id="Gnh-dO-5QP"/>
                     <connections>
-                        <segue destination="4Lv-5R-SID" kind="presentation" id="v9T-kS-h1T"/>
+                        <segue destination="4Lv-5R-SID" kind="presentation" identifier="showWebView" id="v9T-kS-h1T"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kP7-dW-je0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1360" y="1400"/>
         </scene>
-        <!--View Controller-->
+        <!--Web View Controller-->
         <scene sceneID="Gvi-0M-UIf">
             <objects>
-                <viewController id="4Lv-5R-SID" sceneMemberID="viewController">
+                <viewController id="4Lv-5R-SID" customClass="WebViewController" customModule="MealMemo" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="tAb-vj-HID">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="783"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -90,6 +90,9 @@
                             <constraint firstAttribute="bottom" secondItem="QMp-gs-a1I" secondAttribute="bottom" id="wzQ-AT-0Ja"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="webView" destination="QMp-gs-a1I" id="6c6-tn-fHi"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zVn-Oy-Veb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
